@@ -1,0 +1,37 @@
+
+# Tasks to Create a Docker Directory
+
+- name: Create directory for Docker
+  shell: 'sudo mkdir /home/jhnrnzmendoza/docker'
+
+- name: Create Docker File in Docker Directory
+  shell: 'sudo touch /home/jhnrnzmendoza/docker/dockerfile'
+
+# Tasks to Create a DockerFile Content
+
+- name: Modify dockerfile with Content for Ubuntu
+  copy:
+    dest: "/home/jhnrnzmendoza/docker/dockerfile"
+    content: |
+      FROM Ubuntu
+      MAINTAINER jhnrnzmendoza <qjrlmendoza01@tip.edu.ph>
+      ARG DEBIAN_FRONTEND=noninteractive
+
+      RUN apt install apache2 -y
+      ENTRYPOINT apache2ctl -D FOREGROUND
+  when: ansible_distribution == "Ubuntu"
+
+- name: Modify dockerfile with Content for CentOS
+  copy:
+    dest: "/home/jhnrnzmendoza/docker/dockerfile"
+    content: |
+      FROM CentOS
+      MAINTAINER jhnrnzmendoza <qjrlmendoza01@tip.edu.ph>
+      ARG REDHAT_FRONTEND=noninteractive
+
+      RUN apt install php -y
+      RUN yum install mariadb-server -y
+      RUN yum install mariadb-client -y
+      ENTRYPOINT mariadb-server -D FOREGROUND
+      ENTRYPOINT php -D FOREGROUND
+  when: ansible_distribution == "CentOS"

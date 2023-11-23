@@ -1,0 +1,78 @@
+
+# Tasks for Installing Docker on Ubuntu
+
+- name: Install pre-requisite packages Docker for Ubuntu
+  apt:
+    name:
+      - curl
+    state: present
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Import Repository Key of Docker for Ubuntu
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Import Repository of Docker for Ubuntu
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+    state: present
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install Docker for Ubuntu
+  apt:
+    name: docker-ce
+    state: present
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable Docker Service for Ubuntu
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+# Tasks for Installing Docker on CentOS
+
+- name: Install pre-requisite packages of Docker for CentOS
+  yum:
+    name:
+      - curl
+    state: present
+  become: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Import Repository Key of Docker for CentOS
+  shell: rpm --import https://get.docker.com/ | sh
+  when: ansible_distribution == "CentOS"
+
+- name: Install Docker for CentOS
+  yum:
+    name: docker
+    state: present
+  become: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Enable Docker Service for CentOS
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+  when: ansible_distribution == "CentOS"
+
+# Tasks for Adding Current User to Docker Group
+
+- name: Add the User to the Group Docker for Ubuntu
+  shell: 'sudo usermod -aG docker $USER'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add the User to the Group Docker for CentOS
+  shell: 'sudo usermod -aG dockerroot $USER'
+  when: ansible_distribution == "CentOS"
+
